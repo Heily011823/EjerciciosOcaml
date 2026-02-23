@@ -1,67 +1,87 @@
+(* Ejercicio 6.2.2 *)
+(* Tipo Abstracto Complex *)
+(* Aquí se define un tipo abstracto para representar números complejos *)
 
-(* Ejercicio: Tipo Abstracto Money *)
-(* Moneda: Pesos Colombianos *)
-
-(* Operaciones incluidas: *)
-(* - Crear una cantidad de dinero 
-   - Sumar dos cantidades de dinero
-   - Restar dos cantidades de dinero
-   - Multiplicar por un número entero 
-   - Convertir a formato de cadena ($xxxx.xx COP), ósea en peso colombiano*)
-
+(* Operaciones incluidas:
+   - Crear un número complejo
+   - Sumar dos números complejos
+   - Restar dos números complejos
+   - Multiplicar dos números complejos
+   - Calcular la magnitud
+   - Convertir a cadena
+*)
 
 (* Definición de la interfaz *)
-module type MONEY = sig
+module type COMPLEJO = sig
   type t   (* tipo abstracto *)
 
-  val crear : int -> int -> t
+  val crear : float -> float -> t
   val sumar : t -> t -> t
   val restar : t -> t -> t
-  val multiplicar : t -> int -> t
-  val a_cadena : t -> string
+  val multiplicar : t -> t -> t
+  val magnitud : t -> float
+  val convertir_a_texto : t -> string
 end
 
 (* Implementación *)
-module Money : MONEY = struct
+module Complex : COMPLEJO = struct
 
-  (* Se guarda el dinero en centavos
-     para evitar errores de precisión con float *)
-  type t = int  (* total en centavos *)
+  (* Representación interna: Se guarda como parte real y parte imaginaria *)
+  type t = { real: float; imaginaria: float }
 
-  (* Crear una cantidad de dinero *)
-  let crear pesos centavos =
-    (pesos * 100) + centavos
+  (* Crear un número complejo *)
+  let crear r i =
+    { real = r; imaginaria = i }
 
-  (* Sumar dos cantidades de dinero *)
-  let sumar dinero1 dinero2 =
-    dinero1 + dinero2
+  (* Suma de números complejos *)
+  let sumar complejo1 complejo2 =
+    {
+      real = complejo1.real +. complejo2.real;
+      imaginaria = complejo1.imaginaria +. complejo2.imaginaria
+    }
 
-  (* Restar dos cantidades de dinero *)
-  let restar dinero1 dinero2 =
-    dinero1 - dinero2
+  (* Resta de números complejos *)
+  let restar complejo1 complejo2 =
+    {
+      real = complejo1.real -. complejo2.real;
+      imaginaria = complejo1.imaginaria -. complejo2.imaginaria
+    }
 
-  (* Multiplicar por un número entero *)
-  let multiplicar m n =
-    m * n
+  (* Multiplicación de números complejos *)
+  let multiplicar complejo1 complejo2 =
+    {
+      real = (complejo1.real *. complejo2.real) -. (complejo1.imaginaria *. complejo2.imaginaria);
+      imaginaria = (complejo1.real *. complejo2.imaginaria) +. (complejo1.imaginaria *. complejo2.real)
+    }
 
-  (* Mostrar en formato de pesos colombianos *)
-  let a_cadena m =
-    let pesos = m / 100 in
-    let centavos = abs (m mod 100) in
-    Printf.sprintf "$%d.%02d COP" pesos centavos
+  (* Magnitud del número complejo *)
+  let magnitud complejo =
+    sqrt ((complejo.real *. complejo.real) +. (complejo.imaginaria *. complejo.imaginaria))
+
+  (* Convertir a formato a + bi *)
+  let convertir_a_texto complejo =
+    Printf.sprintf "%.2f + %.2fi" complejo.real complejo.imaginaria
+
 end
 
 (* Pruebas para verificar que funciona *)
 let () =
-  let dinero1 = Money.crear 15000 50 in
-  let dinero2 = Money.crear 3200 75 in
+  let complejo1 = Complex.crear 3.0 4.0 in
+  let complejo2 = Complex.crear 1.0 2.0 in
 
-  let suma = Money.sumar dinero1 dinero2 in
-  let resta = Money.restar dinero1 dinero2 in
-  let triple = Money.multiplicar dinero1 3 in
+  (* Suma *)
+  let suma = Complex.sumar complejo1 complejo2 in
 
-  print_endline ("Dinero 1 = " ^ Money.a_cadena dinero1);
-  print_endline ("Dinero 2 = " ^ Money.a_cadena dinero2);
-  print_endline ("Suma = " ^ Money.a_cadena suma);
-  print_endline ("Resta = " ^ Money.a_cadena resta);
-  print_endline ("Triple del dinero = " ^ Money.a_cadena triple);
+  (* Resta *)
+  let resta = Complex.restar complejo1 complejo2 in
+
+  (* Multiplicación *)
+  let multiplicacion = Complex.multiplicar complejo1 complejo2 in
+  let magnitud_complejo1 = Complex.magnitud complejo1 in
+
+  print_endline ("Número complejo 1 = " ^ Complex.convertir_a_texto complejo1);
+  print_endline ("Número complejo 2 = " ^ Complex.convertir_a_texto complejo2);
+  print_endline ("Suma = " ^ Complex.convertir_a_texto suma);
+  print_endline ("Resta = " ^ Complex.convertir_a_texto resta);
+  print_endline ("Multiplicación = " ^ Complex.convertir_a_texto multiplicacion);
+  print_endline ("Magnitud del número complejo 1 = " ^ string_of_float magnitud_complejo1);

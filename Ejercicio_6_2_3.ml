@@ -1,4 +1,3 @@
-
 (* Ejercicio 6.2.3: Tipo Abstracto Date *)
 (* Representa fechas del calendario *)
 (* Formato ISO: yyyy-mm-dd *)
@@ -16,11 +15,10 @@ module type DATE = sig
 
   val crear : int -> int -> int -> t
   val igual : t -> t -> bool
-  val anterior : t -> t -> bool
-  val devolver_si_no : t -> t -> string   
+  val anterior : t -> t -> bool   
   val sumar_dias : t -> int -> t
   val restar_dias : t -> int -> t
-  val a_iso : t -> string
+  val convertir_formato_iso : t -> string
 end
 
 
@@ -58,11 +56,6 @@ module Date : DATE = struct
     else if fecha1.mes <> fecha2.mes then fecha1.mes < fecha2.mes
     else fecha1.dia < fecha2.dia
 
-  (* Devuelve "Si" o "No" dependiendo si es anterior *)
-  let devolver_si_no fecha1 fecha2 =
-    if anterior fecha1 fecha2 then "Si"
-    else "No"
-
   (* Suma los días *)
   let sumar_dias f n =
     { f with dia = f.dia + n }
@@ -72,7 +65,7 @@ module Date : DATE = struct
     { f with dia = f.dia - n }
 
   (* Convierte la fecha al formato ISO yyyy-mm-dd *)
-  let a_iso f =
+  let convertir_formato_iso f =
     Printf.sprintf "%04d-%02d-%02d" f.anio f.mes f.dia
 
 end
@@ -84,8 +77,8 @@ let () =
   let fecha1 = Date.crear 23 2 2026 in
   let fecha2 = Date.crear 25 2 2026 in
 
-  print_endline ("Fecha 1: " ^ Date.a_iso fecha1);
-  print_endline ("Fecha 2: " ^ Date.a_iso fecha2);
+  print_endline ("Fecha 1: " ^ Date.convertir_formato_iso fecha1);
+  print_endline ("Fecha 2: " ^ Date.convertir_formato_iso fecha2);
 
   (* Igualdad *)
   print_endline ("¿La fecha 1 es igual a fecha 2? " ^
@@ -93,12 +86,12 @@ let () =
 
   (* Comparación *)
   print_endline ("¿La fecha 1 es anterior a la fecha 2? " ^
-    Date.devolver_si_no fecha1 fecha2);
+    (if Date.anterior fecha1 fecha2 then "Si" else "No"));
 
   (* Sumar los días *)
   let fecha3 = Date.sumar_dias fecha1 2 in
-  print_endline ("Fecha 1 + 2 días: " ^ Date.a_iso fecha3);
+  print_endline ("Fecha 1 + 2 días: " ^ Date.convertir_formato_iso fecha3);
 
   (* Restar los días *)
   let fecha4 = Date.restar_dias fecha2 2 in
-  print_endline ("Fecha 2 - 2 días: " ^ Date.a_iso fecha4);
+  print_endline ("Fecha 2 - 2 días: " ^ Date.convertir_formato_iso fecha4);
