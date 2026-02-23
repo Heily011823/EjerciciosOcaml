@@ -1,6 +1,13 @@
 
-(* Ejercicio: Tipo Abstracto Money              *)
-(* Moneda: Pesos Colombianos (COP)              *)
+(* Ejercicio: Tipo Abstracto Money *)
+(* Moneda: Pesos Colombianos *)
+
+(* Operaciones incluidas: *)
+(* - Crear una cantidad de dinero 
+   - Sumar dos cantidades de dinero
+   - Restar dos cantidades de dinero
+   - Multiplicar por un número entero 
+   - Convertir a formato de cadena ($xxxx.xx COP), ósea en peso colombiano*)
 
 
 (* Definición de la interfaz *)

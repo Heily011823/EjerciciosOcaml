@@ -12,8 +12,7 @@
 
 (* Definición de la interfaz *)
 module type DATE = sig
-  type t
-  (* t es abstracto: El usuario no sabe cómo se representa *)
+  type t (* tipo abstracto *)
 
   val crear : int -> int -> int -> t
   val igual : t -> t -> bool
