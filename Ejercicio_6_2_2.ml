@@ -3,7 +3,7 @@
 (* Moneda: Pesos Colombianos (COP)              *)
 
 
-(* Defino la interfaz *)
+(* Definición de la interfaz *)
 module type MONEY = sig
   type t   (* tipo abstracto *)
 
@@ -17,7 +17,7 @@ end
 (* Implementación *)
 module Money : MONEY = struct
 
-  (* Decidí guardar el dinero en centavos
+  (* Se guarda el dinero en centavos
      para evitar errores de precisión con float *)
   type t = int  (* total en centavos *)
 
@@ -25,26 +25,26 @@ module Money : MONEY = struct
   let crear pesos centavos =
     (pesos * 100) + centavos
 
-  (* Sumar dos cantidades *)
+  (* Sumar dos cantidades de dinero *)
   let sumar dinero1 dinero2 =
     dinero1 + dinero2
 
-  (* Restar dos cantidades *)
+  (* Restar dos cantidades de dinero *)
   let restar dinero1 dinero2 =
     dinero1 - dinero2
 
-  (* Multiplicar por un entero *)
+  (* Multiplicar por un número entero *)
   let multiplicar m n =
     m * n
 
-  (* Mostrar en formato pesos colombianos *)
+  (* Mostrar en formato de pesos colombianos *)
   let a_cadena m =
     let pesos = m / 100 in
     let centavos = abs (m mod 100) in
     Printf.sprintf "$%d.%02d COP" pesos centavos
 end
 
-(* Pruebas que hice para verificar *)
+(* Pruebas para verificar que funciona *)
 let () =
   let dinero1 = Money.crear 15000 50 in
   let dinero2 = Money.crear 3200 75 in
