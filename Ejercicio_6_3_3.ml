@@ -1,82 +1,87 @@
 (** 
-  Ejemplo básico de herencia y polimorfismo en OCaml.
+  6.3.3 Clase [text]
 
-  Se define una clase abstracta [vehiculo] y dos clases concretas
-  [carro] y [motocicleta] que heredan de ella.
+  Representa un texto que puede:
+  - Cargarse desde un archivo
+  - Guardarse en un archivo
+  - Insertar texto en una posición
+  - Eliminar parte del texto
+  - Mostrar el contenido
 *)
 
 (**
-  Clase virtual [vehiculo]
+  Clase [text]
 
-  Representa un vehículo genérico identificado por una marca.
-  Es virtual porque declara el método [encender] sin implementación,
-  obligando a las clases hijas a definirlo.
+  Modela un documento simple almacenado como una cadena.
 *)
-class virtual vehiculo (marca : string) =
-object
-  (** Marca del vehículo *)
-  val marca : string = marca
+class text () =
+object (self)
+
+  (** Contenido del texto *)
+  val mutable content : string = ""
 
   (**
-    Devuelve la marca del vehículo.
-    @return string con la marca
+    Carga el contenido desde un archivo.
+    @param filename Nombre del archivo a leer
   *)
-  method obtener_marca : string = marca
+  method load (filename : string) : unit =
+    let channel = open_in filename in
+    let length = in_channel_length channel in
+    content <- really_input_string channel length;
+    close_in channel
 
   (**
-    Método abstracto que debe ser implementado
-    por las clases derivadas.
+    Guarda el contenido en un archivo.
+    @param filename Nombre del archivo a escribir
   *)
-  method virtual encender : unit
+  method save (filename : string) : unit =
+    let channel = open_out filename in
+    output_string channel content;
+    close_out channel
+
+  (**
+    Inserta texto en una posición específica.
+    @param position Posición donde insertar
+    @param new_text Texto a insertar
+  *)
+  method insert (position : int) (new_text : string) : unit =
+    if position >= 0 && position <= String.length content then
+      let before = String.sub content 0 position in
+      let after = String.sub content position (String.length content - position) in
+      content <- before ^ new_text ^ after
+
+  (**
+    Elimina texto entre dos posiciones.
+    @param start_pos Posición inicial
+    @param end_pos Posición final
+  *)
+  method delete (start_pos : int) (end_pos : int) : unit =
+    if start_pos >= 0 && end_pos <= String.length content && start_pos < end_pos then
+      let before = String.sub content 0 start_pos in
+      let after = String.sub content end_pos (String.length content - end_pos) in
+      content <- before ^ after
+
+  (**
+    Muestra el contenido actual del texto.
+  *)
+  method display : unit =
+    print_endline content
+
 end
-
-
 (**
-  Clase [carro]
-
-  Representa un carro.
-  Hereda de [vehiculo] e implementa el método [encender].
-*)
-class carro (marca : string) =
-object
-  inherit vehiculo marca
-
-  (**
-    Imprime un mensaje indicando que el carro se está encendiendo.
-  *)
-  method encender : unit =
-    print_endline (marca ^ " se está encendiendo como carro")
-end
-
-
-(**
-  Clase [motocicleta]
-
-  Representa una motocicleta.
-  Hereda de [vehiculo] e implementa el método [encender].
-*)
-class motocicleta (marca : string) =
-object
-  inherit vehiculo marca
-
-  (**
-    Imprime un mensaje indicando que la motocicleta se está encendiendo.
-  *)
-  method encender : unit =
-    print_endline (marca ^ " se está encendiendo como motocicleta")
-end
-
-
-(**
-  Función principal.
-
-  Crea instancias de [carro] y [motocicleta]
-  y ejecuta el método [encender] en cada una,
-  demostrando polimorfismo dinámico.
+  Prueba del ejercicio 6.3.3
 *)
 let () =
-  let v1 = new carro "Toyota" in
-  let v2 = new motocicleta "Yamaha" in
+  let t = new text () in
 
-  v1#encender;
-  v2#encender
+  (* Insertamos texto *)
+  t#insert 0 "Hola mundo";
+  t#display;
+
+  (* Insertamos más texto *)
+  t#insert 4 " hermoso";
+  t#display;
+
+  (* Eliminamos parte del texto *)
+  t#delete 4 12;
+  t#display
